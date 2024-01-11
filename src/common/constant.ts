@@ -7,6 +7,7 @@ export const CONSTANT = {
   BASIC_PASSWORD: 'Xzys%{JN^w9AsC',
   BASIC_USERNAME: 'xyz',
   PASSWORD_HASH_SALT: 'JBDuwwuhd232QYWBXSKHCNKWBwgyew87635',
+  BASIC_AUTH: 'Basic cGxhbmRpZDpYenlzJXtKTl53OUFzQw==',
 };
 
 export const Swagger = {
