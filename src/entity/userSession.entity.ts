@@ -12,8 +12,4 @@ export class UserSessionEntity extends Dao {
   async createUserSession(payload: CreateUserSession) {
     return await this.saveData(payload);
   }
-
-  async deleteSession(payload: any) {
-    return await this.deleteMany(payload);
-  }
 }

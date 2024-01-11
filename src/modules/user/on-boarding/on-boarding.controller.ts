@@ -3,7 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiBasicAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { HttpResponse } from 'src/common/httpResponse';
-import { DeviceParamsDto, LoginDto } from 'src/modules/user/on-boarding/dto/on-boarding.dto';
+import { CreateOnboardingDto, DeviceParamsDto } from 'src/modules/user/on-boarding/dto/on-boarding.dto';
 import { OtpDto } from './dto/on-boarding.dto';
 import { UserOnBoardingService } from './on-boarding.service';
 
@@ -11,12 +11,12 @@ import { UserOnBoardingService } from './on-boarding.service';
 @Controller('/')
 export class UserOnBoardingController {
   constructor(private readonly httpResponse: HttpResponse, private readonly userOnBoardingService: UserOnBoardingService) {}
-  @Post('/login')
-  @ApiOperation({ summary: 'Login api' })
+  @Post('/signup')
+  @ApiOperation({ summary: 'sign api' })
   @ApiBasicAuth()
   @UseGuards(AuthGuard('basic'))
-  async login(@Body() loginDto: LoginDto, @Headers() deviceParamsDto: DeviceParamsDto, @Res() response: Response) {
-    const [status, result] = await this.userOnBoardingService.login(loginDto, deviceParamsDto);
+  async signup(@Body() createOnboardingDto: CreateOnboardingDto, @Res() response: Response) {
+    const [status, result] = await this.userOnBoardingService.signUp(createOnboardingDto);
     return this.httpResponse.sendResponse(response, status, result);
   }
 

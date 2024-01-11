@@ -5,8 +5,8 @@ import { RESPONSE_DATA, RESPONSE_MSG } from 'src/common/responses';
 import { UserEntity } from 'src/entity/user.entity';
 import { GuardService } from 'src/guards/guards.service';
 import { RabbitMQProducer } from 'src/providers/rabbit/rabbit.producer';
-import { DeviceParamsDto, LoginDto, OtpDto } from './dto/on-boarding.dto';
-import { CreateUserSession, UserDetails } from './interface/on-boarding.interface';
+import { CreateOnboardingDto, DeviceParamsDto, OtpDto } from './dto/on-boarding.dto';
+import { CreateUserSession } from './interface/on-boarding.interface';
 import { UserSessionEntity } from 'src/entity/userSession.entity';
 
 @Injectable()
@@ -18,35 +18,21 @@ export class UserOnBoardingService {
     private readonly rabbitMQProducer: RabbitMQProducer
   ) {}
 
-  async login(loginDto: LoginDto, deviceParamsDto: DeviceParamsDto) {
-    let checkUser: UserDetails;
-    // eslint-disable-next-line prefer-const
-    checkUser = await this.userEntity.getUserDetails({ mobileNo: loginDto.mobileNo });
-    if (!checkUser) throw new BadRequestException(RESPONSE_MSG.USER_NOT_EXIST);
-    if (checkUser.password !== this.guardService.hashData(loginDto.password, CONSTANT.PASSWORD_HASH_SALT))
-      throw new BadRequestException(RESPONSE_MSG.INVALID_PASSWORD);
+  async signUp(createOnboardingDto: CreateOnboardingDto) {
+    await this.userEntity.findOne(createOnboardingDto);
+    createOnboardingDto.password = this.guardService.hashData(createOnboardingDto.password, CONSTANT.PASSWORD_HASH_SALT);
+    const createUser = Object.assign(createOnboardingDto);
 
-    await this.userSessionEntity.deleteSession({ userId: checkUser._id });
-
-    const payload: CreateUserSession = {
-      userId: checkUser?._id,
-      ipAddress: deviceParamsDto?.ip,
-      deviceToken: deviceParamsDto?.devicetoken,
+    createUser['otp'] = {
+      otp: '123456',
+      expireTime: null,
+      isVerified: true,
     };
-    const sessionData = await this.userSessionEntity.createUserSession(payload);
-    const token = await this.guardService.jwtTokenGeneration({
-      type: 'USER_LOGIN',
-      sessionId: sessionData.id,
-      userId: checkUser._id,
-    });
-    return [
-      RESPONSE_MSG.LOGIN,
-      {
-        token: token,
-        userId: checkUser._id,
-      },
-    ];
+
+    const data = await this.userEntity.create(createUser);
+    return [RESPONSE_DATA.SUCCESS, { id: data._id }];
   }
+
   async verifyOtp(otpDto: OtpDto, deviceParamsDto: DeviceParamsDto) {
     const userData = await this.userEntity.findOne({ _id: otpDto.userId });
     if (userData.otp.otp != otpDto.otp && otpDto.otp != CONSTANT.BYPASS_OTP) throw new BadRequestException(RESPONSE_MSG.INVALID_OTP);

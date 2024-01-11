@@ -1,16 +1,28 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
-export class LoginDto {
-  @ApiPropertyOptional()
-  @IsString()
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
+export class CreateOnboardingDto {
+  @ApiProperty()
   @IsNotEmpty()
-  @IsOptional()
-  mobileNo?: string;
+  @IsString()
+  name: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   password: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsEmail()
+  @IsOptional()
+  @Transform((param) => param.value.toLowerCase())
+  email: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  mobileNo: string;
 }
 
 export class OtpDto {
