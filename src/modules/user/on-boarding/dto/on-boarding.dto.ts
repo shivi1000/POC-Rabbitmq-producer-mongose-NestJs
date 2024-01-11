@@ -24,21 +24,6 @@ export class CreateOnboardingDto {
   @IsNotEmpty()
   mobileNo: string;
 }
-
-export class OtpDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  otp: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  userId: string;
-
-  expireTime?: Date;
-  isVerified?: boolean;
-}
 export class DeviceParamsDto {
   @ApiPropertyOptional()
   @IsString()

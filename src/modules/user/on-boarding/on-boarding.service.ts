@@ -1,11 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CONSTANT } from 'src/common/constant';
 import { ENUM } from 'src/common/enum';
 import { RESPONSE_DATA, RESPONSE_MSG } from 'src/common/responses';
 import { UserEntity } from 'src/entity/user.entity';
 import { GuardService } from 'src/guards/guards.service';
 import { RabbitMQProducer } from 'src/providers/rabbit/rabbit.producer';
-import { CreateOnboardingDto, DeviceParamsDto, OtpDto } from './dto/on-boarding.dto';
+import { CreateOnboardingDto, DeviceParamsDto } from './dto/on-boarding.dto';
 import { CreateUserSession } from './interface/on-boarding.interface';
 import { UserSessionEntity } from 'src/entity/userSession.entity';
 
@@ -18,31 +18,17 @@ export class UserOnBoardingService {
     private readonly rabbitMQProducer: RabbitMQProducer
   ) {}
 
-  async signUp(createOnboardingDto: CreateOnboardingDto) {
-    await this.userEntity.findOne(createOnboardingDto);
+  async signUp(createOnboardingDto: CreateOnboardingDto, deviceParamsDto: DeviceParamsDto) {
+    const userData = await this.userEntity.findOne(createOnboardingDto);
+    if (userData) throw new ConflictException(RESPONSE_DATA.MOBILE_NO_ALREADY_EXIST);
     createOnboardingDto.password = this.guardService.hashData(createOnboardingDto.password, CONSTANT.PASSWORD_HASH_SALT);
     const createUser = Object.assign(createOnboardingDto);
-
-    createUser['otp'] = {
-      otp: '123456',
-      expireTime: null,
-      isVerified: true,
-    };
-
     const data = await this.userEntity.create(createUser);
-    return [RESPONSE_DATA.SUCCESS, { id: data._id }];
-  }
-
-  async verifyOtp(otpDto: OtpDto, deviceParamsDto: DeviceParamsDto) {
-    const userData = await this.userEntity.findOne({ _id: otpDto.userId });
-    if (userData.otp.otp != otpDto.otp && otpDto.otp != CONSTANT.BYPASS_OTP) throw new BadRequestException(RESPONSE_MSG.INVALID_OTP);
-
     const addSessionData: CreateUserSession = {
       userId: userData?._id,
       ipAddress: deviceParamsDto?.ip,
       deviceToken: deviceParamsDto?.devicetoken,
     };
-
     const publish = {
       type: ENUM.NOTIFICATION_TYPE.PUSH,
       pushData: {
@@ -59,14 +45,12 @@ export class UserOnBoardingService {
       },
     };
     await this.rabbitMQProducer.sendPush(publish);
-
     const sessionData = await this.userSessionEntity.createUserSession(addSessionData);
     const token = await this.guardService.jwtTokenGeneration({
       type: 'USER_LOGIN',
       sessionId: sessionData.id,
       userId: userData._id,
     });
-
-    return [RESPONSE_DATA.SUCCESS, { token: token }];
+    return [RESPONSE_MSG.SUCCESS, { id: data._id, token: token }];
   }
 }
