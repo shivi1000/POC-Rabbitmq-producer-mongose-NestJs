@@ -8,6 +8,8 @@ export const RESPONSE_MSG = {
   INVALID_OTP: 'Incorrect OTP.',
   SESSION_EXPIRED: 'Session Expired.',
   INVALID_AUTHORIZATION_TOKEN: 'Invalid authorization token.',
+  LOGIN: 'Login Successfully.',
+  INVALID_PASSWORD: 'Enter a valid password.',
 };
 
 export const RESPONSE_DATA = {

@@ -6,6 +6,7 @@ export const CONSTANT = {
   BYPASS_OTP: '123456',
   BASIC_PASSWORD: 'Xzys%{JN^w9AsC',
   BASIC_USERNAME: 'xyz',
+  PASSWORD_HASH_SALT: 'JBDuwwuhd232QYWBXSKHCNKWBwgyew87635',
 };
 
 export const Swagger = {

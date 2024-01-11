@@ -8,4 +8,8 @@ export class UserEntity extends Dao {
   constructor(@Inject('USER_MODEL') private userModel: Model<IUser>) {
     super(userModel);
   }
+
+  async getUserDetails(payload: any, projection: any = {}) {
+    return await this.findOne(payload, projection);
+  }
 }
