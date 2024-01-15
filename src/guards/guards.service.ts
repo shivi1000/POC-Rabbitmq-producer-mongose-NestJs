@@ -4,7 +4,7 @@ import * as crypto from 'crypto';
 import { CONSTANT } from 'src/common/constant';
 interface JWTParams {
   type: string;
-  sessionId: string;
+  // sessionId: string;
   userId?: string;
 }
 
