@@ -10,6 +10,7 @@ export class RabbitMQProducer {
   constructor(private readonly configService: ConfigService) {
     this.QUEUE = this.configService.get<string>('RABBIT_MQ_QUEUE');
   }
+
   async sendPush(payload: any) {
     try {
       payload['channel'] = ENUM.CHANNEL_TYPE.PUSH;

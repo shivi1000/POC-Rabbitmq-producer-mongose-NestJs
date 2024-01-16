@@ -4,17 +4,17 @@ import { RouterModule, Routes } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import configuration from 'config/configuration';
 import { LoggerModule } from './logger/logger.module';
-import { UserOnBoardingModule } from './modules/user/on-boarding/on-boarding.module';
 import { DatabaseModule } from './providers/database/db.module';
 import { schemaProviders } from './schema/schema.provider';
 import { RabbitModule } from './providers/rabbit/rabbit.module';
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from 'src/filters/exceptionFilter';
+import { NotificationModule } from './modules/notification/notification/notification.module';
 
 const routes: Routes = [
   {
-    path: '/onboarding',
-    module: UserOnBoardingModule,
+    path: '/bulk-notification',
+    module: NotificationModule,
   },
 ];
 @Module({
@@ -25,7 +25,7 @@ const routes: Routes = [
     DatabaseModule,
     LoggerModule,
     RouterModule.register(routes),
-    UserOnBoardingModule,
+    NotificationModule,
   ],
   providers: [
     ...schemaProviders,
