@@ -1,5 +1,4 @@
 import { ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as bodyParser from 'body-parser';
@@ -30,9 +29,6 @@ async function bootstrap() {
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   const httpAdapter = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
-  const configService = app.get(ConfigService);
-  console.log('Port number is: ', configService.get<string>('PORT'));
-  const port: number = configService.get<number>('PORT') ?? 8001;
 
   const config = new DocumentBuilder()
     .setTitle(Swagger.Title)
@@ -52,6 +48,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(Swagger.Path, app, document);
 
-  await app.listen(port);
+  await app.listen(8008);
 }
 bootstrap();
