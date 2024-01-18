@@ -20,11 +20,8 @@ export class RabbitMQ implements OnApplicationShutdown {
     return new Promise<ConfirmChannel[]>(async (resolve, reject) => {
       try {
         const connectionOptions: Options.Connect = {
-          protocol: this.configService.get<string>('RABBIT_MQ_PROTOCOL'),
-          hostname: this.configService.get<string>('RABBIT_MQ_URL'),
-          port: Number(this.configService.get<string>('RABBIT_MQ_PORT')),
-          username: this.configService.get<string>('RABBIT_MQ_USERNAME'),
-          password: this.configService.get<string>('RABBIT_MQ_PASSWORD'),
+          hostname: 'localhost',
+          port: 5672,
         };
         this.connection = await connect(connectionOptions);
 
