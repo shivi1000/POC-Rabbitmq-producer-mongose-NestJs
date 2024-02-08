@@ -46,6 +46,7 @@ export class RabbitMQ implements OnApplicationShutdown {
           channel.on('error', (err: any) => {
             console.error(`[Rabbit MQ] Error in channel ${CHANNEL_NAME}: ` + err.message);
           });
+          await createExchange(channel);
           channels[CHANNEL_NAME] = channel;
         }
         console.log('[Rabbit MQ] connected');
@@ -55,5 +56,14 @@ export class RabbitMQ implements OnApplicationShutdown {
         reject(error);
       }
     });
+  }
+}
+async function createExchange(channel:any) {
+  try {
+    await channel.assertExchange('demo_queue', 'direct', { durable: false });
+    console.log('Exchange "demo_queue" created successfully');
+  } catch (error) {
+    console.error('Error creating exchange:', error.message);
+    throw error;
   }
 }

@@ -8,7 +8,7 @@ const logger = new Logger('HTTP');
 export class RabbitMQProducer {
   QUEUE: any = '';
   constructor(private readonly configService: ConfigService) {
-    this.QUEUE = this.configService.get<string>('RABBIT_MQ_QUEUE');
+    this.QUEUE = this.configService.get<string>('RABBIT_MQ_QUEUE') ?? 'demo_queue';
   }
 
   async sendPush(payload: any) {
@@ -16,6 +16,22 @@ export class RabbitMQProducer {
       payload['channel'] = ENUM.CHANNEL_TYPE.PUSH;
       const channel = channels[ENUM.CHANNEL_TYPE.PUSH];
       channel.publish(this.QUEUE, ENUM.CHANNEL_TYPE.PUSH, Buffer.from(JSON.stringify(payload)));
+      return;
+    } catch (error) {
+      logger.error(`we have an error sendPush' ${error}`, {
+        url: 'Rabbit MQ Error in Rabbit MQ',
+        httpStatus: 500,
+      });
+      console.error(`we have an error sendPush ==> ${error}`);
+      return {};
+    }
+  }
+
+  async sendEmail(payload: any) {
+    try {
+      payload['channel'] = ENUM.CHANNEL_TYPE.EMAIL;
+      const channel = channels[ENUM.CHANNEL_TYPE.EMAIL];
+      channel.publish(this.QUEUE, ENUM.CHANNEL_TYPE.EMAIL, Buffer.from(JSON.stringify(payload)));
       return;
     } catch (error) {
       logger.error(`we have an error sendPush' ${error}`, {

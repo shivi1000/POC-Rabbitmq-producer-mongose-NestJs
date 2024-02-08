@@ -9,12 +9,17 @@ import { schemaProviders } from './schema/schema.provider';
 import { RabbitModule } from './providers/rabbit/rabbit.module';
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from 'src/filters/exceptionFilter';
+import { fileUploadModule } from './modules/send-file/send-file.module';
 import { NotificationModule } from './modules/notification/notification/notification.module';
 
 const routes: Routes = [
   {
     path: '/bulk-notification',
     module: NotificationModule,
+  },
+  {
+    path: '/file',
+    module: fileUploadModule,
   },
 ];
 @Module({
@@ -26,6 +31,7 @@ const routes: Routes = [
     LoggerModule,
     RouterModule.register(routes),
     NotificationModule,
+    fileUploadModule,
   ],
   providers: [
     ...schemaProviders,
