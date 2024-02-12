@@ -11,7 +11,7 @@ export class FileUploadController {
   constructor(private readonly httpResponse: HttpResponse, private readonly fileUploadService: FileUploadService) {}
   @Post('/upload')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file: Express.Multer.File, @Req() req: Request, @Res() response: Response, @Body() body: { userEmails: string[] }) {
+  async uploadFile(@UploadedFile() file: Express.Multer.File, @Res() response: Response, @Body() body: { userEmails: string[] }) {
     try {
       console.log('inside try--------------->', file);
       const userEmails = body.userEmails || [];

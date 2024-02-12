@@ -61,7 +61,7 @@ export class RabbitMQ implements OnApplicationShutdown {
 async function createExchange(channel:any) {
   try {
     await channel.assertExchange('demo_queue', 'direct', { durable: false });
-    console.log('Exchange "demo_queue" created successfully');
+    console.log('"demo_queue" created successfully');
   } catch (error) {
     console.error('Error creating exchange:', error.message);
     throw error;
