@@ -105,6 +105,13 @@ npm run dev
 }
 
 ```
+## NOTE: If you want to use email service 
+
+- **Rabbit mq Producer API:**http://localhost:8008/api/v1/file/upload?file&userEmails=["mailto:avv.c@appinventiv.com"] run in postman
+- Sample Request form-data:
+
+file:/home/desktop/demo.json
+userEmails:["xyz@gmail.com"]
 
 
 
